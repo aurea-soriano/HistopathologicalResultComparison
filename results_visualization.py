@@ -30,12 +30,12 @@ def main():
     x_new = np.linspace(x[0], x[-1], 50)
     y_new = f(x_new)
 
-    plt.plot(x,y,marker='o', color=('#0095B6'), markersize=8)
-    plt.plot(x, y, color=('#CB4154'), linewidth=2)
+    plt.plot(x,y,marker='o', color=('#0077b3'), markersize=8)
+    plt.plot(x, y, color=('#ffad33'), linewidth=2)
     plt.xlim([x[0]-1, x[-1] + 1 ])
     plt.ylim(0,1.2)
 
-    plt.plot(x,y_mean, color=('#6E7F80'), linestyle='dashed')
+    plt.plot(x,y_mean, color=('#009900'), linestyle='dashed')
 
     plt.show()
 
