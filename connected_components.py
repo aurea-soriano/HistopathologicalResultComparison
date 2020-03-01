@@ -8,7 +8,7 @@ import cv2
 
 
 def main():
-    fname='cells1.jpeg'
+    fname='TNBC_NucleiSegmentation/GT_01/01_1.png'
     blur_radius = 1.0
     threshold = 50
 
