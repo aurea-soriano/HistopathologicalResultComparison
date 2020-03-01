@@ -31,7 +31,8 @@ def main():
 
 
 
-    fname2='TNBC_NucleiSegmentation/Slide_01/01_1_result.png'
+    #fname2='TNBC_NucleiSegmentation/Slide_01/01_1_result.png'
+    fname2='TNBC_NucleiSegmentation/GT_01/01_1.png'
 
     img2 = Image.open(fname2).convert('L')
     img2 = np.asarray(img2)
