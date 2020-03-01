@@ -14,7 +14,7 @@ def main():
     img1 = np.asarray(img1)
 
     # Threshold it so it becomes binary
-    ret1, thresh1 = cv2.threshold(img1,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    ret1, thresh1 = cv2.threshold(img1, 127, 255, cv2.THRESH_BINARY)  # ensure binary
     # You need to choose 4 or 8 for connectivity type
     connectivity1 = 8
     # Perform the operation
@@ -23,7 +23,7 @@ def main():
     # The first cell is the number of labels
     num_labels1 = output1[0]
     # The second cell is the label matrix
-    labels1 = output1[1]
+    original_labels1 = output1[1]
     # The third cell is the stat matrix
     stats1 = output1[2]
     # The fourth cell is the centroid matrix
@@ -31,13 +31,13 @@ def main():
 
 
 
-    fname2='TNBC_NucleiSegmentation/GT_01/01_1.png'
+    fname2='TNBC_NucleiSegmentation/Slide_01/01_1_result.png'
 
     img2 = Image.open(fname2).convert('L')
     img2 = np.asarray(img2)
 
     # Threshold it so it becomes binary
-    ret2, thresh2 = cv2.threshold(img2,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    ret2, thresh2 = cv2.threshold(img2, 127, 255, cv2.THRESH_BINARY)  # ensure binary
     # You need to choose 4 or 8 for connectivity type
     connectivity2 = 8
     # Perform the operation
@@ -46,12 +46,58 @@ def main():
     # The first cell is the number of labels
     num_labels2 = output2[0]
     # The second cell is the label matrix
-    labels2 = output2[1]
+    original_labels2 = output2[1]
     # The third cell is the stat matrix
     stats2 = output2[2]
     # The fourth cell is the centroid matrix
     centroids2 = output2[3]
 
+
+    #True Positive = cell in real / cell in the result
+    #False Positive = not cell in real / cell in the result
+    #False Negative = cell in real / not cell in the result
+    #True Negative = not cell in real / not cell in the result
+    #Total Elements = number of components in the GT
+
+
+    labels1 = np.where(original_labels1==0, -1, original_labels1)
+    labels2 = np.where(original_labels2==0, -1, original_labels2)
+
+    tp = 0
+    fp = 0
+    fn = 0
+    tn = 0 ## so far we are not calculating this, because it would be based on the background
+    total = num_labels1
+
+
+    detected_labels = []
+
+    for i in range(1,len(centroids1)):
+        x = int(round(centroids1[i][1]));
+        y = int(round(centroids1[i][0]));
+        label2 = labels2[x][y]
+        label1 = labels1[x][y]
+        if((label2>-1) and label2 not in detected_labels):
+            detected_labels.append(label2)
+            labels1 = np.where(labels1==label1, -1, labels1)
+            labels2 = np.where(labels2==label2, -1, labels2)
+            tp = tp + 1
+        else:
+            fn = fn + 1
+
+    unique_labels1 = np.unique(labels1);
+    unique_labels2 = np.unique(labels2);
+    unique_labels1 = np.delete(unique_labels1, np.where(unique_labels1 == -1))
+    unique_labels2 = np.delete(unique_labels2, np.where(unique_labels2 == -1))
+
+    fp = len(unique_labels2)
+    fn += len(unique_labels1)
+
+    precision = tp/ (tp+fp);
+    recall = tp / (tp+fn);
+    f1 = 2 * ((precision*recall)/(precision+recall));
+
+    print(precision, recall, f1);
 
     plt.figure(figsize=(9, 3.5))
     plt.subplot(131)
@@ -60,11 +106,11 @@ def main():
     plt.axis('off')
     plt.subplot(132)
     plt.title('OpenCV {}'.format(num_labels1))
-    plt.imshow(labels1, cmap='nipy_spectral')
+    plt.imshow(original_labels1, cmap='nipy_spectral')
     plt.axis('off')
     plt.subplot(133)
     plt.title('OpenCV {}'.format(num_labels2))
-    plt.imshow(labels2, cmap='nipy_spectral')
+    plt.imshow(original_labels2, cmap='nipy_spectral')
     plt.axis('off')
 
 
