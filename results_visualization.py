@@ -7,8 +7,8 @@ def main():
 
     sns.set(style="ticks")
     sns.set(style="darkgrid")
-    result_file = open("results.txt", "r")
-    result_values = result_file.read().split('\n')
+    result_file = open("/home/oscar/src/HistopathologicalResultComparison/MoNuSeg/jaccard.txt", "r")
+    result_values = result_file.readlines()
     result_values = result_values[:-1]
     result_values =  np.array(result_values, dtype=np.float32)
     print(result_values)
