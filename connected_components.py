@@ -9,16 +9,20 @@ import os
 
 def main():
 
-    dir_path = 'MonuSeg/'
+    dir_path = 'MoNuSeg/'
     gt_path = dir_path+'gt/'
     r_moments_path = dir_path+'results/moments/'
     r_otsu_path = dir_path+'results/otsu/'
     r_triangle_path = dir_path+'results/triangle/'
+    
+    if os.path.exists("resultMonuSeg.txt"):
+        os.remove("resultMonuSeg.txt")
 
     f = open("resultMonuSeg.txt", "a")
-    f.write("image_id;strategy;precision;recall;f1;strategy;precision;recall;f1;strategy;precision;recall;f1")
-
-
+    f.write("image_id;strategy;precision;recall;f1;strategy;precision;recall;f1;strategy;precision;recall;f1\n")
+    
+    
+    
     for root, dirs, files in os.walk(gt_path):
         for filename in files:
             print(filename)

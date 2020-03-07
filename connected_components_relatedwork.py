@@ -11,12 +11,15 @@ from os import path
 
 def main():
 
-    dir_path =  'quPath/tnbc/'   #'MonuSeg/'
+    dir_path =  'quPath/MoNuSeg/'   #'MonuSeg/'
     gt_path = dir_path+'gt/'
     results_path = dir_path+'results/'
 
-    f = open("resultTNBCRW.txt", "a")
-    f.write("image_id;strategy;precision;recall;f1;strategy;precision;recall;f1;strategy;precision;recall;f1")
+    if os.path.exists("resultMonuSegRW.txt"):
+        os.remove("resultMonuSegRW.txt")
+        
+    f = open("resultMonuSegRW.txt", "a")
+    f.write("image_id;strategy;precision;recall;f1;strategy;precision;recall;f1;strategy;precision;recall;f1\n")
 
 
     for root, dirs, files in os.walk(gt_path):
@@ -25,7 +28,7 @@ def main():
             line = []
 
             fname1=gt_path + filename
-            fname2=results_path + filename.split('.')[0]+" (1, 0, 0, 512, 512)_binary.png"
+            fname2=results_path + filename.split('.')[0]+" (1, 0, 0, 1000, 1000)binary.png"#" (1, 0, 0, 512, 512)_binary.png"
 
             if(path.exists(fname1) and path.exists(fname2)):
 
