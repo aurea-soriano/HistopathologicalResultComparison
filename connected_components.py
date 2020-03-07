@@ -9,16 +9,16 @@ import os
 
 def main():
 
-    dir_path = 'MoNuSeg/'
+    dir_path =  'TNBC_NucleiSegmentation/'#'MoNuSeg/'
     gt_path = dir_path+'gt/'
     r_moments_path = dir_path+'results/moments/'
     r_otsu_path = dir_path+'results/otsu/'
     r_triangle_path = dir_path+'results/triangle/'
     
-    if os.path.exists("resultMonuSeg.txt"):
-        os.remove("resultMonuSeg.txt")
+    if os.path.exists("resultTNBC_NucleiSegmentation.txt"): #resultMonuSeg
+        os.remove("resultTNBC_NucleiSegmentation.txt")
 
-    f = open("resultMonuSeg.txt", "a")
+    f = open("resultTNBC_NucleiSegmentation.txt", "a")
     f.write("image_id;strategy;precision;recall;f1;strategy;precision;recall;f1;strategy;precision;recall;f1\n")
     
     
@@ -68,8 +68,9 @@ def main():
             #Total Elements = number of components in the GT
 
 
-            labels1 = np.where(original_labels1==0, -1, original_labels1)
-            labels2 = np.where(original_labels2==0, -1, original_labels2)
+            labels1 = np.where(original_labels1==0, -1, original_labels1).copy()
+            labels2 = np.where(original_labels2==0, -1, original_labels2).copy()
+            backup_labels2 = labels2.copy()
 
             tp = 0
             fp = 0
@@ -84,11 +85,14 @@ def main():
                 x = int(round(centroids1[i][1]));
                 y = int(round(centroids1[i][0]));
                 label2 = labels2[x][y]
+                backup_label2 = backup_labels2[x][y]
                 label1 = labels1[x][y]
-                if((label2>-1) and label2 not in detected_labels):
+                if((backup_label2>-1) and label2 not in detected_labels):
                     detected_labels.append(label2)
                     labels1 = np.where(labels1==label1, -1, labels1)
                     labels2 = np.where(labels2==label2, -1, labels2)
+                    tp = tp + 1
+                elif((backup_label2>-1) and label2 in detected_labels):
                     tp = tp + 1
                 else:
                     fn = fn + 1
@@ -129,8 +133,9 @@ def main():
             #Total Elements = number of components in the GT
 
 
-            labels1 = np.where(original_labels1==0, -1, original_labels1)
-            labels2 = np.where(original_labels2==0, -1, original_labels2)
+            labels1 = np.where(original_labels1==0, -1, original_labels1).copy()
+            labels2 = np.where(original_labels2==0, -1, original_labels2).copy()
+            backup_labels2 = labels2.copy()
 
             tp = 0
             fp = 0
@@ -145,11 +150,14 @@ def main():
                 x = int(round(centroids1[i][1]));
                 y = int(round(centroids1[i][0]));
                 label2 = labels2[x][y]
+                backup_label2 = backup_labels2[x][y]
                 label1 = labels1[x][y]
-                if((label2>-1) and label2 not in detected_labels):
+                if((backup_label2>-1) and label2 not in detected_labels):
                     detected_labels.append(label2)
                     labels1 = np.where(labels1==label1, -1, labels1)
                     labels2 = np.where(labels2==label2, -1, labels2)
+                    tp = tp + 1
+                elif((backup_label2>-1) and label2 in detected_labels):
                     tp = tp + 1
                 else:
                     fn = fn + 1
@@ -190,8 +198,9 @@ def main():
             #Total Elements = number of components in the GT
 
 
-            labels1 = np.where(original_labels1==0, -1, original_labels1)
-            labels2 = np.where(original_labels2==0, -1, original_labels2)
+            labels1 = np.where(original_labels1==0, -1, original_labels1).copy()
+            labels2 = np.where(original_labels2==0, -1, original_labels2).copy()
+            backup_labels2 = labels2.copy()
 
             tp = 0
             fp = 0
@@ -206,11 +215,14 @@ def main():
                 x = int(round(centroids1[i][1]));
                 y = int(round(centroids1[i][0]));
                 label2 = labels2[x][y]
+                backup_label2 = backup_labels2[x][y]
                 label1 = labels1[x][y]
-                if((label2>-1) and label2 not in detected_labels):
+                if((backup_label2>-1) and label2 not in detected_labels):
                     detected_labels.append(label2)
                     labels1 = np.where(labels1==label1, -1, labels1)
                     labels2 = np.where(labels2==label2, -1, labels2)
+                    tp = tp + 1
+                elif((backup_label2>-1) and label2 in detected_labels):
                     tp = tp + 1
                 else:
                     fn = fn + 1

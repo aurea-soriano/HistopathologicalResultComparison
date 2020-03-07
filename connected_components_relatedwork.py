@@ -11,15 +11,15 @@ from os import path
 
 def main():
 
-    dir_path =  'quPath/MoNuSeg/'   #'MonuSeg/'
+    dir_path =  'quPath/tnbc/'   #'MonuSeg/'
     gt_path = dir_path+'gt/'
     results_path = dir_path+'results/'
 
-    if os.path.exists("resultMonuSegRW.txt"):
-        os.remove("resultMonuSegRW.txt")
+    if os.path.exists("resultTNBCRW.txt"):
+        os.remove("resultTNBCRW.txt")
         
-    f = open("resultMonuSegRW.txt", "a")
-    f.write("image_id;strategy;precision;recall;f1;strategy;precision;recall;f1;strategy;precision;recall;f1\n")
+    f = open("resultTNBCRW.txt", "a")
+    f.write("image_id;strategy;precision;recall;f1;\n")
 
 
     for root, dirs, files in os.walk(gt_path):
@@ -28,7 +28,7 @@ def main():
             line = []
 
             fname1=gt_path + filename
-            fname2=results_path + filename.split('.')[0]+" (1, 0, 0, 1000, 1000)binary.png"#" (1, 0, 0, 512, 512)_binary.png"
+            fname2=results_path + filename.split('.')[0]+" (1, 0, 0, 512, 512)_binary.png" #" (1, 0, 0, 1000, 1000)binary.png"#
 
             if(path.exists(fname1) and path.exists(fname2)):
 
@@ -85,27 +85,31 @@ def main():
                 #Total Elements = number of components in the GT
 
 
-                labels1 = np.where(original_labels1==0, -1, original_labels1)
-                labels2 = np.where(original_labels2==0, -1, original_labels2)
-
+                labels1 = np.where(original_labels1==0, -1, original_labels1).copy()
+                labels2 = np.where(original_labels2==0, -1, original_labels2).copy()
+                backup_labels2 = labels2.copy()
+    
                 tp = 0
                 fp = 0
                 fn = 0
                 tn = 0 ## so far we are not calculating this, because it would be based on the background
                 total = num_labels1
-
-
+    
+    
                 detected_labels = []
-
+    
                 for i in range(1,len(centroids1)):
                     x = int(round(centroids1[i][1]));
                     y = int(round(centroids1[i][0]));
                     label2 = labels2[x][y]
+                    backup_label2 = backup_labels2[x][y]
                     label1 = labels1[x][y]
-                    if((label2>-1) and label2 not in detected_labels):
+                    if((backup_label2>-1) and label2 not in detected_labels):
                         detected_labels.append(label2)
                         labels1 = np.where(labels1==label1, -1, labels1)
                         labels2 = np.where(labels2==label2, -1, labels2)
+                        tp = tp + 1
+                    elif((backup_label2>-1) and label2 in detected_labels):
                         tp = tp + 1
                     else:
                         fn = fn + 1
